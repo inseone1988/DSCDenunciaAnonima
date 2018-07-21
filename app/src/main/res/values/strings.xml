@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">DSC Denuncia Anonima</string>
+    <string name="main_view_title">Si ves algo, di algo</string>
+    <string name="privacy_advice_link">Aviso de privacidad</string>
+    <string name="dsc_symbol">©DSC 2018</string>
+    <string name="img_logo_dsc">Logo de la empresa</string>
+    <string name="anon_btn_prompt">Denuncia anonima</string>
+    <string name="welcome_title">Nice title goes here</string>
+    <string name="welcome_message">Al hacer uso de la aplicacion consientes el uso de la informacion recabada para los fines de investigacion pertinenetes, la aplicacion no guarda ninguna informacion acerca del usuario o del movil, por lo que si llegase a haber algun fallo en la aplicacion o el dispositivo estos se perderan.</string>
+    <string name="prompt_ok">OK</string>
+    <string name="prompt_cancel">Cancelar</string>
+    <string name="dont_ask_again">Volver a mostrar</string>
+    <string name="toast_sample">Se ha iniciado la actividad</string>
+    <string name="title_activity_main_report">MainReportActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="appBarTitle">Seguridad Patrimonial</string>
+    <string name="new_report">Nuevo reporte</string>
+</resources>
