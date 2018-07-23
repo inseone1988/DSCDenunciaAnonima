@@ -6,7 +6,7 @@
     <string name="img_logo_dsc">Logo de la empresa</string>
     <string name="anon_btn_prompt">Denuncia anonima</string>
     <string name="welcome_title">Nice title goes here</string>
-    <string name="welcome_message">Al hacer uso de la aplicacion consientes el uso de la informacion recabada para los fines de investigacion pertinenetes, la aplicacion no guarda ninguna informacion acerca del usuario o del movil, por lo que si llegase a haber algun fallo en la aplicacion o el dispositivo estos se perderan.</string>
+    <string name="welcome_message">Al hacer uso de la aplicacion consientes el uso de la informacion recabada para los fines de investigacion pertinenetes. Consulta el aviso de  privacidad en https:wwww.example.com/privacy</string>
     <string name="prompt_ok">OK</string>
     <string name="prompt_cancel">Cancelar</string>
     <string name="dont_ask_again">Volver a mostrar</string>
@@ -15,4 +15,15 @@
     <string name="action_settings">Settings</string>
     <string name="appBarTitle">Seguridad Patrimonial</string>
     <string name="new_report">Nuevo reporte</string>
+    <string name="say_something">\"Si ves algo di algo. \"</string>
+    <string name="express_complaint_system">Sistema de denuncia express</string>
+    <string name="evidence_taking">Evidencia</string>
+    <string name="open_app">Abrir aplicacion</string>
+    <string name="no_data">Inicie nuevo reporte</string>
+    <string name="current_report">Reporte Actual</string>
+    <string name="subject">Asunto : %1$s</string>
+    <string name="date">Fecha : %1$s</string>
+    <string name="resume">Resumen : %1$s</string>
+    <string name="evidencias">Evidencias</string>
+    <string name="send_report">Enviar reporte</string>
 </resources>
