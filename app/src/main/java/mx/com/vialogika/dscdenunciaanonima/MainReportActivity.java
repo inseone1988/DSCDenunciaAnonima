@@ -1,14 +1,20 @@
 package mx.com.vialogika.dscdenunciaanonima;
 
 import android.Manifest;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -25,24 +31,36 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+
+
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import droidninja.filepicker.FilePickerBuilder;
+import droidninja.filepicker.FilePickerConst;
+import droidninja.filepicker.utils.Orientation;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
 public class MainReportActivity extends AppCompatActivity {
 
-    private List<String> paths = new ArrayList<>();
-    private List<File> files;
+    private ArrayList<String> mPaths = new ArrayList<>();
 
-    private CardView evidencesChooser;
+
+    private List<String> paths = new ArrayList<>();
+   // private CardView evidencesChooser;
     private RecyclerView mRecyclerview;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private CardView noData;
+    private ImageView photoChooser;
+    private ImageView documentsChooser;
+
     private LinearLayout reportResume;
 
 
@@ -58,17 +76,17 @@ public class MainReportActivity extends AppCompatActivity {
     }
 
     private void init(){
-        files = new ArrayList<>();
+
     }
 
     private void getItems(){
-        evidencesChooser = findViewById(R.id.choose_evidences);
+        photoChooser = findViewById(R.id.photo_chooser);
+        documentsChooser = findViewById(R.id.document_chooser);
         mRecyclerview = findViewById(R.id.evidences_recycle);
         mAdapter = new EvidenceAdapter(paths, new ViewAdapter() {
             @Override
             public void onCloseClick(int position) {
-                deleteEvidence(position);
-
+               deleteEvidence(position);
             }
         });
         mLayoutManager = new LinearLayoutManager(this);
@@ -79,7 +97,7 @@ public class MainReportActivity extends AppCompatActivity {
     }
 
     private void setCardsVisibility(){
-        if (files.size() < 1){
+        if (paths.size() < 1){
             noData.setVisibility(View.VISIBLE);
             reportResume.setVisibility(View.GONE);
         }else{
@@ -90,17 +108,22 @@ public class MainReportActivity extends AppCompatActivity {
 
     private void deleteEvidence(int position){
         paths.remove(position);
-        files.remove(position);
         mRecyclerview.removeViewAt(position);
         mAdapter.notifyItemRemoved(position);
         mAdapter.notifyItemRangeChanged(position,paths.size());
     }
 
     private void setListeners(){
-        evidencesChooser.setOnClickListener(new View.OnClickListener() {
+        documentsChooser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                chooser();
+                documentChooser();
+            }
+        });
+        photoChooser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageChooser();
             }
         });
     }
@@ -111,28 +134,44 @@ public class MainReportActivity extends AppCompatActivity {
 
     }
 
-    private void chooser(){
-        EasyImage.configuration(this)
-                .setImagesFolderName("evidences");
-        EasyImage.openChooserWithDocuments(this,"Elegir archivo",1);
+    private void imageChooser(){
+        FilePickerBuilder.getInstance()
+                .setSelectedFiles(mPaths)
+                .pickPhoto(this);
+    }
+
+    private void documentChooser(){
+        FilePickerBuilder.getInstance()
+                .setSelectedFiles(mPaths)
+                .pickFile(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data){
         super.onActivityResult(requestCode,resultCode,data);
-        EasyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
-            @Override
-            public void onImagesPicked(@NonNull List<File> list, EasyImage.ImageSource imageSource, int i) {
-                //Handle documents as byte[]
-                files.addAll(list);
-                for(int v = 0;v<list.size();v++){
-                    String path = list.get(v).getAbsolutePath();
-                    paths.add(path);
-                    mAdapter.notifyDataSetChanged();
-                    setCardsVisibility();
+        switch(requestCode){
+            case FilePickerConst.REQUEST_CODE_PHOTO:
+                if(resultCode== AppCompatActivity.RESULT_OK && data != null){
+                    paths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
                 }
-            }
-        });
+                break;
+            case FilePickerConst.REQUEST_CODE_DOC:
+                 if(resultCode== AppCompatActivity.RESULT_OK && data != null){
+                     paths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
+                 }
+                 break;
+        }
+        mAdapter.notifyDataSetChanged();
+        setCardsVisibility();
+    }
+
+    private void unknownFileFormat(){
+        new MaterialDialog.Builder(this)
+                .title(R.string.advice)
+                .content(R.string.unknown_file_advice)
+                .positiveText(R.string.prompt_ok)
+                .negativeText(R.string.prompt_cancel)
+                .show();
     }
 
     private class EvidenceAdapter extends RecyclerView.Adapter<EvidenceAdapter.EvidenceViewHolder>{
@@ -187,13 +226,38 @@ public class MainReportActivity extends AppCompatActivity {
         }
 
         private Bitmap image(String path){
-            Bitmap image = null;
-            File imgFile = new File(path);
-            if (imgFile.exists()){
-                image = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            }
-            return image;
+            String fileType = Utils.mediaType(path);
+            return setThumbnail(path,fileType);
         }
+    }
+
+    private Bitmap setThumbnail(String path,String extension){
+        Resources res = getResources();
+        Bitmap image = null;
+        File thumb = new File(path);
+        if (thumb.exists()){
+            switch(extension){
+                case "video":
+                    image = BitmapFactory.decodeResource(res,R.drawable.mp4);
+                    break;
+                case "image":
+                    image = BitmapFactory.decodeFile(path);
+                    image = ThumbnailUtils.extractThumbnail(image,100,100);
+                    break;
+                case "document":
+                    if(Utils.getFileExtension(path).equals("pdf")){
+                        image = BitmapFactory.decodeResource(res,R.drawable.pdf);
+                    }else if(Utils.getFileExtension(path).equals("word")){
+                        image = BitmapFactory.decodeResource(res,R.drawable.word);
+                    }
+                    break;
+                default:
+                    image = BitmapFactory.decodeResource(res,R.drawable.not_available_circle);
+                    unknownFileFormat();
+                    break;
+            }
+        }
+        return image;
     }
     interface ViewAdapter{
         void onCloseClick(int position);

@@ -26,4 +26,6 @@
     <string name="resume">Resumen : %1$s</string>
     <string name="evidencias">Evidencias</string>
     <string name="send_report">Enviar reporte</string>
+    <string name="advice">Aviso</string>
+    <string name="unknown_file_advice">El archivo seleccionado podria no enviarse debido a que no es un tipo conocido de archivo. Los formatos mas comunes soportados son jpeg, png, gif, bitmap, pdf, doc, docx, mp4. EL archivo se adjuntara con el reporte pero no se garantiza el seguimiento si la informacion no es legible.</string>
 </resources>
