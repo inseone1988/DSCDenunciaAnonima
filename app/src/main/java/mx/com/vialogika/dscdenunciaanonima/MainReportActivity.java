@@ -86,7 +86,7 @@ public class MainReportActivity extends AppCompatActivity {
     }
 
     private void init(){
-        getSupportActionBar().hide();
+
         setResumeValues();
     }
 
