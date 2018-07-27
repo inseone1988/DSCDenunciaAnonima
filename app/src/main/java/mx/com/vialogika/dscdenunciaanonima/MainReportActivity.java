@@ -38,8 +38,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 
 import java.io.File;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
@@ -50,16 +54,21 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 public class MainReportActivity extends AppCompatActivity {
 
     private ArrayList<String> mPaths = new ArrayList<>();
+    private Report cReport = new Report();
+    private Resources res;
 
 
     private List<String> paths = new ArrayList<>();
-   // private CardView evidencesChooser;
+    private CardView editReport;
     private RecyclerView mRecyclerview;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private CardView noData;
     private ImageView photoChooser;
     private ImageView documentsChooser;
+    private TextView date;
+    private TextView subject;
+    private TextView resume;
 
     private LinearLayout reportResume;
 
@@ -70,14 +79,53 @@ public class MainReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_report);
         setupActionBar();
         getItems();
+        res = getResources();
         init();
         setListeners();
         setCardsVisibility();
     }
 
     private void init(){
-
+        getSupportActionBar().hide();
+        setResumeValues();
     }
+
+    private void setResumeValues(){
+        if(cReport.getDateTime().equals("")){
+            date.setText(String.format(res.getString(R.string.date),res.getString(R.string.waiting_edition)));
+        }else{
+            date.setText(String.format(res.getString(R.string.date),cReport.getDateTime()));
+        }
+        if(cReport.getSubject().equals("")){
+            subject.setText(String.format(res.getString(R.string.subject),res.getString(R.string.waiting_edition)));
+        }else{
+            subject.setText(String.format(res.getString(R.string.subject),cReport.getSubject()));
+        }
+        if(cReport.getDescription().equals("")){
+            resume.setText(String.format(res.getString(R.string.resume),res.getString(R.string.waiting_edition)));
+        }else{
+            resume.setText(String.format(res.getString(R.string.resume),truncateDescription()));
+        }
+    }
+
+    private String truncateDescription(){
+        String truncated = null;
+        int maxChar = 10;
+        int curChar = cReport.getSubject().length();
+        if(curChar > maxChar){
+            truncated = cReport.getSubject().substring(0,maxChar) + "...";
+        }else{
+            truncated = cReport.getSubject();
+        }
+        return truncated;
+    }
+
+    private void editReport(){
+        int REQUESTCODE = 1;
+        Intent intent = new Intent(this,EditReport.class);
+        startActivityForResult(intent,REQUESTCODE);
+    }
+
 
     private void getItems(){
         photoChooser = findViewById(R.id.photo_chooser);
@@ -94,6 +142,10 @@ public class MainReportActivity extends AppCompatActivity {
         mRecyclerview.setAdapter(mAdapter);
         noData = findViewById(R.id.no_items_card);
         reportResume = findViewById(R.id.evidence_resume);
+        date = findViewById(R.id.report_date);
+        subject = findViewById(R.id.report_subject);
+        resume = findViewById(R.id.report_resume);
+        editReport = findViewById(R.id.reporte_nuvo);
     }
 
     private void setCardsVisibility(){
@@ -124,6 +176,12 @@ public class MainReportActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 imageChooser();
+            }
+        });
+        editReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editReport();
             }
         });
     }

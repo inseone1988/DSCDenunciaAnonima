@@ -12,15 +12,15 @@ import mx.com.vialogika.dscdenunciaanonima.BR;
 public class Report extends BaseObservable {
 
     private String UUID = java.util.UUID.randomUUID().toString();
-    private String dateTime;
+    private String dateTime = "";
     private String eventDateTime;
     private String title;
-    private String subject;
+    private String subject = "";
     private String what;
     private String when;
     private String how;
     private String where;
-    private String description;
+    private String description = "";
     private boolean couldBeContacted = false;
     private List<String> evidencePaths = new ArrayList<>();
 
