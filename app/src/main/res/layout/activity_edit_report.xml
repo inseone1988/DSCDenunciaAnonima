@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             app:cardBackgroundColor="@color/colorDsc"
             app:cardCornerRadius="15dp"
@@ -88,6 +88,7 @@
                     android:text="@string/generals" />
 
                 <EditText
+                    android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -96,6 +97,7 @@
                     android:inputType="textPersonName" />
 
                 <EditText
+                    android:id="@+id/position"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -104,7 +106,7 @@
                     android:inputType="textPersonName" />
 
                 <CheckBox
-                    android:id="@+id/checkBox"
+                    android:id="@+id/couldbecontacted"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -133,6 +135,7 @@
                     android:text="@string/site_info" />
 
                 <EditText
+                    android:id="@+id/site"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -156,13 +159,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/eventDataTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:hint="@string/event_facts" />
 
                 <EditText
+                    android:id="@+id/client"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -170,7 +174,7 @@
                     android:inputType="textPersonName" />
 
                 <EditText
-                    android:id="@+id/editText2"
+                    android:id="@+id/datetime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -178,7 +182,7 @@
                     android:inputType="textPersonName" />
 
                 <EditText
-                    android:id="@+id/editText3"
+                    android:id="@+id/eventwhat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -186,7 +190,7 @@
                     android:inputType="textPersonName" />
 
                 <EditText
-                    android:id="@+id/editText5"
+                    android:id="@+id/eventwhere"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -194,7 +198,7 @@
                     android:inputType="textPersonName" />
 
                 <EditText
-                    android:id="@+id/editText6"
+                    android:id="@+id/eventhow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -202,7 +206,7 @@
                     android:inputType="textPersonName" />
 
                 <EditText
-                    android:id="@+id/editText4"
+                    android:id="@+id/eventfacts"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     android:layout_marginBottom="10dp"
@@ -211,6 +215,14 @@
                     android:hint="@string/event_facts_hint"
                     android:inputType="textMultiLine"
                     android:shadowRadius="5" />
+
+                <Button
+                    android:id="@+id/savereport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_test"
+                    android:text="Button"
+                    android:textColor="@drawable/tab_white" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
     </LinearLayout>
