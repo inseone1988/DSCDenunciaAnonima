@@ -12,6 +12,12 @@ import mx.com.vialogika.dscdenunciaanonima.BR;
 public class Report extends BaseObservable {
 
     private String UUID = java.util.UUID.randomUUID().toString();
+    private String name;
+    private String position;
+    private String site;
+    private String client;
+    private String date;
+    private String time;
     private String dateTime = "";
     private String eventDateTime;
     private String title;
@@ -130,5 +136,29 @@ public class Report extends BaseObservable {
     public void removePath(int position){
         this.evidencePaths.remove(position);
         notifyPropertyChanged(BR.evidencePaths);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

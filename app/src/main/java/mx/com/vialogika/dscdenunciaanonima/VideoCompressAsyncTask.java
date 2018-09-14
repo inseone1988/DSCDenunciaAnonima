@@ -12,7 +12,7 @@ public class VideoCompressAsyncTask extends AsyncTask<String,String,String> {
     private Context mContext;
     Utils.Video cb;
 
-    public VideoCompressAsyncTask(Context context,Utils.Video callback){
+    public VideoCompressAsyncTask(Context context, Utils.Video callback){
         mContext = context;
         cb = callback;
     }

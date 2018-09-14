@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">DSC Denuncia Anonima</string>
+    <string name="app_name">DSC Denuncia Express</string>
     <string name="main_view_title">Si ves algo, di algo</string>
     <string name="privacy_advice_link">Aviso de privacidad</string>
     <string name="dsc_symbol">©DSC 2018</string>
     <string name="img_logo_dsc">Logo de la empresa</string>
-    <string name="anon_btn_prompt">Denuncia anonima</string>
+    <string name="anon_btn_prompt">Denuncia Express</string>
     <string name="welcome_title">Nice title goes here</string>
     <string name="welcome_message">Al hacer uso de la aplicacion consientes el uso de la informacion recabada para los fines de investigacion pertinenetes. Consulta el aviso de  privacidad en https:wwww.example.com/privacy</string>
     <string name="prompt_ok">OK</string>
@@ -29,14 +29,14 @@
     <string name="advice">Aviso</string>
     <string name="waiting_edition">Esperando edicion</string>
     <string name="fill_report_help">.-Favor de llenar los campos que a continuacion se listan, todos los datos son requeridos</string>
-    <string name="generals">.-Datos Generales</string>
+    <string name="generals">1.-Datos Generales</string>
     <string name="name">Nombre completo</string>
     <string name="position">Posicion / Cargo</string>
     <string name="prefer_not_say_it">Prefiero omitir mis datos</string>
-    <string name="site_name">Site ej. DHL Cedros</string>
-    <string name="site_client">Cliente</string>
-    <string name="site_info">.-Datos del site</string>
-    <string name="event_facts">.-Datos del evento</string>
+    <string name="site_name">Site (Ej. DHL Cedros)</string>
+    <string name="site_client">Cliente (Ej. ATT)</string>
+    <string name="site_info">2.-Datos del site</string>
+    <string name="event_facts">3.-Datos del evento</string>
     <string name="event_facts_datetime">Hora y fecha del evento</string>
     <string name="events_fact_what">Que paso?</string>
     <string name="events_fact_how">Como paso?</string>
@@ -44,4 +44,8 @@
     <string name="events_fact_exp">Explicacion de los hechos</string>
     <string name="event_facts_hint">Narracion de el evento</string>
     <string name="unknown_file_advice">El archivo seleccionado podria no enviarse debido a que no es un tipo conocido de archivo. Los formatos mas comunes soportados son jpeg, png, gif, bitmap, pdf, doc, docx, mp4. EL archivo se adjuntara con el reporte pero no se garantiza el seguimiento si la informacion no es legible.</string>
+    <string name="save_report">Continuar</string>
+    <string name="datetimeprompt">Seleccione fecha y hora aproximada del evento</string>
+    <string name="logodescription">Logo</string>
+    <string name="notempty">Este campo no puede estar vacio.</string>
 </resources>

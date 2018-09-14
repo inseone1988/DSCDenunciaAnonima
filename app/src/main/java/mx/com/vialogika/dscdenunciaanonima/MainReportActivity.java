@@ -38,6 +38,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 
 import java.io.File;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ import java.util.Locale;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
 import droidninja.filepicker.utils.Orientation;
+import mx.com.vialogika.dscdenunciaanonima.Util.Now;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
@@ -121,7 +124,7 @@ public class MainReportActivity extends AppCompatActivity {
     }
 
     private void editReport(){
-        int REQUESTCODE = 1;
+        int REQUESTCODE = 1050;
         Intent intent = new Intent(this,EditReport.class);
         startActivityForResult(intent,REQUESTCODE);
     }
@@ -218,9 +221,31 @@ public class MainReportActivity extends AppCompatActivity {
                      paths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
                  }
                  break;
+            case 1050:
+                if(data != null){
+                    String[] values = (String[]) data.getSerializableExtra("reportData");
+                    mapResultToObject(values);
+                }
+                break;
         }
         mAdapter.notifyDataSetChanged();
         setCardsVisibility();
+    }
+
+    private void mapResultToObject(String[] values){
+        cReport.setName(values[0]);
+        cReport.setPosition(values[1]);
+        cReport.setSite(values[2]);
+        cReport.setClient(values[3]);
+        cReport.setDate(values[4]);
+        cReport.setTime(values[5]);
+        cReport.setDateTime(Now.getCurrentDateTime());
+        cReport.setSubject(values[6]);
+        cReport.setWhat(values[6]);
+        cReport.setWhere(values[7]);
+        cReport.setHow(values[8]);
+        cReport.setDescription(values[9]);
+        setResumeValues();
     }
 
     private void unknownFileFormat(){
