@@ -3,73 +3,11 @@ package mx.com.vialogika.dscdenunciaanonima;
 import android.content.Context;
 import android.os.Environment;
 import android.webkit.MimeTypeMap;
-
-import com.iceteck.silicompressorr.SiliCompressor;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Utils {
-
-    public static boolean moveCacheFile(Context context, File cacheFile, final Evidences callbacks) {
-        File outputMediaFile = new File(getOutputMediaDirectory(context));
-        boolean ret = false;
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-        String filetype = mediaType(cacheFile.getAbsolutePath());
-        String finalDest = null;
-        switch(filetype){
-            case "image":
-                finalDest = processImage(context,cacheFile.getAbsolutePath(),outputMediaFile);
-                callbacks.onEvidenceSaved(finalDest);
-                break;
-            case "video":
-                processVideo(context, cacheFile.getAbsolutePath(), getOutputMediaDirectory(context), new Video() {
-                    @Override
-                    public void onVideoCompressed(String filepath) {
-                        callbacks.onVideoSaved(filepath);
-                    }
-                });
-                callbacks.onEvidenceSaved(finalDest);
-                break;
-            default :
-                try {
-                    fis = new FileInputStream(cacheFile);
-
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-                    byte[] buffer = new byte[1024];
-                    int read = -1;
-                    while( (read = fis.read(buffer) ) != -1 ) {
-                        baos.write(buffer, 0, read);
-                    }
-                    baos.close();
-                    fis.close();
-                    fos = new FileOutputStream(outputMediaFile);
-                    baos.writeTo(fos);
-                    fos.close();
-
-                    // delete cache
-                    cacheFile.delete();
-                    callbacks.onEvidenceSaved(finalDest);
-                    ret = true;
-                }
-                catch(Exception e) {
-                    //Log.e(TAG, "Error saving previous rates!");
-                }
-                finally {
-                    try { if ( fis != null ) fis.close(); } catch (IOException e) { }
-                    try { if ( fos != null ) fos.close(); } catch (IOException e) { }
-                }
-                break;
-        }
-
-        return ret;
-    }
 
     public static String getFormatFilename(){
         String prefix = "DSC_";
@@ -123,29 +61,6 @@ public class Utils {
         filepath = mediaStorageDir.getPath() + File.separator + mImageName;
         mediaFile = new File(filepath);
         return mediaFile;
-    }
-
-    public static String processImage(Context context,String cachefile,File imgdst){
-        return SiliCompressor.with(context).compress(cachefile,imgdst);
-    }
-
-    public static String processVideo(Context context, String cacheFile, String destination, final Video callback){
-        final String path = null;
-        try{
-            new VideoCompressAsyncTask(context, new Video() {
-                @Override
-                public void onVideoCompressed(String filepath) {
-                    callback.onVideoCompressed(filepath);
-                }
-            }).execute(cacheFile,destination);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return path;
-    }
-
-    public static void processOther(){
-
     }
 
     public static String mediaType(String uri){

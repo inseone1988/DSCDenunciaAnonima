@@ -161,4 +161,28 @@ public class Report extends BaseObservable {
     public void setTime(String time) {
         this.time = time;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public String getClient() {
+        return client;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
+    }
 }

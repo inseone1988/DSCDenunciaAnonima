@@ -50,16 +50,17 @@ import java.util.Locale;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
 import droidninja.filepicker.utils.Orientation;
+import mx.com.vialogika.dscdenunciaanonima.Util.Dialogs;
 import mx.com.vialogika.dscdenunciaanonima.Util.Now;
+import mx.com.vialogika.dscdenunciaanonima.Util.Permissions;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
 public class MainReportActivity extends AppCompatActivity {
 
     private ArrayList<String> mPaths = new ArrayList<>();
-    private Report cReport = new Report();
+    private Report cReport;
     private Resources res;
-
 
     private List<String> paths = new ArrayList<>();
     private CardView editReport;
@@ -89,26 +90,35 @@ public class MainReportActivity extends AppCompatActivity {
     }
 
     private void init(){
-
         setResumeValues();
     }
 
     private void setResumeValues(){
-        if(cReport.getDateTime().equals("")){
+        if(cReport == null){
             date.setText(String.format(res.getString(R.string.date),res.getString(R.string.waiting_edition)));
-        }else{
-            date.setText(String.format(res.getString(R.string.date),cReport.getDateTime()));
-        }
-        if(cReport.getSubject().equals("")){
             subject.setText(String.format(res.getString(R.string.subject),res.getString(R.string.waiting_edition)));
-        }else{
-            subject.setText(String.format(res.getString(R.string.subject),cReport.getSubject()));
-        }
-        if(cReport.getDescription().equals("")){
             resume.setText(String.format(res.getString(R.string.resume),res.getString(R.string.waiting_edition)));
         }else{
+            date.setText(String.format(res.getString(R.string.date),cReport.getDateTime()));
+            subject.setText(String.format(res.getString(R.string.subject),cReport.getSubject()));
             resume.setText(String.format(res.getString(R.string.resume),truncateDescription()));
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case 1051:
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED){
+                    showPermissionsDialog();
+                }
+                break;
+        }
+    }
+
+    private void showPermissionsDialog(){
+        Dialogs.Permissions(this);
     }
 
     private String truncateDescription(){
@@ -124,9 +134,20 @@ public class MainReportActivity extends AppCompatActivity {
     }
 
     private void editReport(){
+        if(cReport == null){
+            cReport = new Report();
+        }
         int REQUESTCODE = 1050;
         Intent intent = new Intent(this,EditReport.class);
+        putReportCurrentData(intent);
         startActivityForResult(intent,REQUESTCODE);
+    }
+
+    private void putReportCurrentData(Intent intent){
+        if(cReport != null){
+            String[] cvalues = new String[]{cReport.getName(),cReport.getPosition(),cReport.getSite(),cReport.getClient(),cReport.getDate(),cReport.getTime(), cReport.getWhat(), cReport.getWhere(),cReport.getHow(),cReport.getDescription()};
+            intent.putExtra("reportValues",cvalues);
+        }
     }
 
 
@@ -151,8 +172,15 @@ public class MainReportActivity extends AppCompatActivity {
         editReport = findViewById(R.id.reporte_nuvo);
     }
 
+    private boolean mustShowCard(){
+        if(paths.size() > 0 || cReport != null){
+            return true;
+        }
+        return false;
+    }
+
     private void setCardsVisibility(){
-        if (paths.size() < 1){
+        if (!mustShowCard()){
             noData.setVisibility(View.VISIBLE);
             reportResume.setVisibility(View.GONE);
         }else{
@@ -168,17 +196,24 @@ public class MainReportActivity extends AppCompatActivity {
         mAdapter.notifyItemRangeChanged(position,paths.size());
     }
 
+    private void requestPermissions(){
+        int REQUESTCODE = 1050;
+        String pCamera = Manifest.permission.CAMERA;
+        String pStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        Permissions.requestPermission(this,new String[]{pCamera,pStorage},REQUESTCODE);
+    }
+
     private void setListeners(){
         documentsChooser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                documentChooser();
+                    documentChooser();
             }
         });
         photoChooser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imageChooser();
+                    imageChooser();
             }
         });
         editReport.setOnClickListener(new View.OnClickListener() {
@@ -196,15 +231,25 @@ public class MainReportActivity extends AppCompatActivity {
     }
 
     private void imageChooser(){
-        FilePickerBuilder.getInstance()
-                .setSelectedFiles(mPaths)
-                .pickPhoto(this);
+        boolean camerapermission = Permissions.hasPermission(this,Manifest.permission.CAMERA);
+        if(camerapermission){
+            FilePickerBuilder.getInstance()
+                    .setSelectedFiles(mPaths)
+                    .pickPhoto(this);
+        }else{
+            requestPermissions();
+        }
     }
 
     private void documentChooser(){
-        FilePickerBuilder.getInstance()
-                .setSelectedFiles(mPaths)
-                .pickFile(this);
+        boolean storagepermission = Permissions.hasPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(storagepermission){
+            FilePickerBuilder.getInstance()
+                    .setSelectedFiles(mPaths)
+                    .pickFile(this);
+        }else{
+           requestPermissions();
+        }
     }
 
     @Override

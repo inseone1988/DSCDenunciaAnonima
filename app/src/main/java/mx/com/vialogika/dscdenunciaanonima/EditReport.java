@@ -50,11 +50,27 @@ public class EditReport extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //Avoid user to loose edited report by pressing back button
+        //super.onBackPressed();
     }
 
     private void init(){
         getSupportActionBar().hide();
+    }
+
+    private void mapExistentValues(){
+        if(values != null){
+            mName.setText(values[0]);
+            MPosition.setText(values[1]);
+            mSite.setText(values[2]);
+            mClient.setText(values[3]);
+            mEventDate.setText(values[4]);
+            mEvenTime.setText(values[5]);
+            mWhat.setText(values[6]);
+            mWhere.setText(values[7]);
+            mWHow.setText(values[8]);
+            mExp.setText(values[9]);
+        }
     }
 
     private void setDate(String Date){
@@ -141,6 +157,16 @@ public class EditReport extends AppCompatActivity {
                 checkAndContinue();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        if (intent.hasExtra("reportValues")){
+            values = (String[]) intent.getSerializableExtra("reportValues");
+            mapExistentValues();
+        }
     }
 
     private void notValidInputToast(){
