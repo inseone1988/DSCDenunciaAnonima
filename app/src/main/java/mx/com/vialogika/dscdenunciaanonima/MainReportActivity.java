@@ -28,14 +28,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 
 
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.UploadService;
 
 import java.io.File;
 import java.io.ObjectInputStream;
@@ -46,11 +51,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
 import droidninja.filepicker.utils.Orientation;
 import mx.com.vialogika.dscdenunciaanonima.Util.Dialogs;
+import mx.com.vialogika.dscdenunciaanonima.Util.NetworkRequest;
 import mx.com.vialogika.dscdenunciaanonima.Util.Now;
 import mx.com.vialogika.dscdenunciaanonima.Util.Permissions;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
@@ -73,8 +80,11 @@ public class MainReportActivity extends AppCompatActivity {
     private TextView date;
     private TextView subject;
     private TextView resume;
+    private Button sendReport;
 
     private LinearLayout reportResume;
+
+    private RequestQueue rq;
 
 
     @Override
@@ -90,7 +100,13 @@ public class MainReportActivity extends AppCompatActivity {
     }
 
     private void init(){
+        initUploadService();
         setResumeValues();
+        rq = Volley.newRequestQueue(this);
+    }
+
+    private void initUploadService(){
+        UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
     }
 
     private void setResumeValues(){
@@ -170,6 +186,7 @@ public class MainReportActivity extends AppCompatActivity {
         subject = findViewById(R.id.report_subject);
         resume = findViewById(R.id.report_resume);
         editReport = findViewById(R.id.reporte_nuvo);
+        sendReport = findViewById(R.id.sendReport);
     }
 
     private boolean mustShowCard(){
@@ -222,11 +239,40 @@ public class MainReportActivity extends AppCompatActivity {
                 editReport();
             }
         });
+        sendReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uploadFiles();
+            }
+        });
     }
 
     private void setupActionBar(){
         ActionBar toolbar = getSupportActionBar();
         toolbar.setTitle(R.string.appBarTitle);
+
+    }
+
+    private void uploadFiles(){
+        try{
+            String uploadId = UUID.randomUUID().toString();
+            String identifier = String.valueOf(System.currentTimeMillis() / 1000L);
+            String url = "https://www.vialogika.com.mx/dscic/requesthandler.php";
+            if(paths.size() > 0){
+                for (int i = 0;i < paths.size();i++){
+                MultipartUploadRequest ur = new MultipartUploadRequest(this,url)
+                        .addParameter("function","saveDEEvidence")
+                        .setNotificationConfig(NetworkRequest.defaultNotificationConfig())
+                        .setMaxRetries(3);
+                    ur.addFileToUpload(paths.get(i),"file" + identifier);
+                    ur.startUpload();
+                }
+            }else{
+                Toast.makeText(this,R.string.nofilestoupload,Toast.LENGTH_SHORT);
+            }
+        }catch(Exception e ){
+            e.printStackTrace();
+        }
 
     }
 
