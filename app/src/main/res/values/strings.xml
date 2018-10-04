@@ -51,4 +51,9 @@
     <string name="reqPermTitle">Permisos de la app</string>
     <string name="reqPermExpl">La aplicacion necesita acceder a la camara y almacenamiento para poder cargar documentos y fotografias anexas a la evidencia, puedes revocar este permiso en cualquier momento desde las propiedades de la app en Configuracion>Aplicaciones>Supply Chain Security>Permisos.</string>
     <string name="nofilestoupload">No hay archivos para subir</string>
+    <string name="networkerrortitle">Error de conexion</string>
+    <string name="networkerror">Se ha agotado el tiempo de espera, favor de revisar la conexion a internet e intente de nuevo.</string>
+    <string name="savedReportTitle">Reporte guardado</string>
+    <string name="success">Exito!!!</string>
+    <string name="savedReportContent">El reporte se ha guardado con exito</string>
 </resources>

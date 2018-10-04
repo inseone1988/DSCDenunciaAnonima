@@ -160,6 +160,12 @@ public class EditReport extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        gatherInputValues();
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Intent intent = getIntent();
@@ -167,10 +173,24 @@ public class EditReport extends AppCompatActivity {
             values = (String[]) intent.getSerializableExtra("reportValues");
             mapExistentValues();
         }
+        if(values != null){
+            mapExistentValues();
+        }
     }
 
     private void notValidInputToast(){
         Toast.makeText(getApplication(),R.string.notempty,Toast.LENGTH_SHORT).show();
+    }
+
+    private void gatherInputValues(){
+        EditText[] inputs = {mName,MPosition,mSite,mClient,mEventDate,mEvenTime,mWhat,mWhere,mWHow,mExp};
+        if(values != null){
+            values = new String[inputs.length];
+            for (int i = 0 ;i < inputs.length; i++){
+                String inputValue = inputs[i].getText().toString();
+                values[i] = inputValue;
+        }
+        }
     }
 
     private boolean checkValidInputs(){

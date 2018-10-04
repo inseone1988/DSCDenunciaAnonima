@@ -35,12 +35,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.NoConnectionError;
 import com.android.volley.RequestQueue;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.UploadService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.ObjectInputStream;
@@ -57,9 +65,11 @@ import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
 import droidninja.filepicker.utils.Orientation;
 import mx.com.vialogika.dscdenunciaanonima.Util.Dialogs;
+import mx.com.vialogika.dscdenunciaanonima.Util.NetworRequest;
 import mx.com.vialogika.dscdenunciaanonima.Util.NetworkRequest;
 import mx.com.vialogika.dscdenunciaanonima.Util.Now;
 import mx.com.vialogika.dscdenunciaanonima.Util.Permissions;
+import mx.com.vialogika.dscdenunciaanonima.Util.ReportCallbacks;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
@@ -242,9 +252,44 @@ public class MainReportActivity extends AppCompatActivity {
         sendReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uploadFiles();
+                NetworkRequest.uploadReport(view.getContext(), cReport, new NetworRequest() {
+                    @Override
+                    public void onResponse(Object Response) {
+                        try{
+                            Gson gson = new Gson();
+                            JSONObject resp = new JSONObject(Response.toString());
+                            boolean succeded = resp.getBoolean("success");
+                            if(succeded){
+                                reportSavedDialog();
+                                uploadFiles();
+                            }
+                        }catch(JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void onRequestError(VolleyError error) {
+                        if (error instanceof TimeoutError || error instanceof NoConnectionError){
+                            networkErrorDialog();
+                        }
+                    }
+                });
+
             }
         });
+    }
+
+    private void reportSavedDialog(){
+        Dialogs.ReportSaved(this, new ReportCallbacks() {
+            @Override
+            public void onReportSaved() {
+                finish();
+            }
+        });
+    }
+
+    private void networkErrorDialog(){
+        Dialogs.noNetworkDialog(this);
     }
 
     private void setupActionBar(){
@@ -255,13 +300,17 @@ public class MainReportActivity extends AppCompatActivity {
 
     private void uploadFiles(){
         try{
-            String uploadId = UUID.randomUUID().toString();
+            if(cReport.getUUID() == null){
+                cReport.setUUID(UUID.randomUUID().toString());
+            }
             String identifier = String.valueOf(System.currentTimeMillis() / 1000L);
             String url = "https://www.vialogika.com.mx/dscic/requesthandler.php";
             if(paths.size() > 0){
                 for (int i = 0;i < paths.size();i++){
                 MultipartUploadRequest ur = new MultipartUploadRequest(this,url)
                         .addParameter("function","saveDEEvidence")
+                        .addParameter("UUID",cReport.getUUID())
+                        .addParameter("filename","file" + identifier)
                         .setNotificationConfig(NetworkRequest.defaultNotificationConfig())
                         .setMaxRetries(3);
                     ur.addFileToUpload(paths.get(i),"file" + identifier);
@@ -333,6 +382,7 @@ public class MainReportActivity extends AppCompatActivity {
         cReport.setDateTime(Now.getCurrentDateTime());
         cReport.setSubject(values[6]);
         cReport.setWhat(values[6]);
+        cReport.setTitle(values[6]);
         cReport.setWhere(values[7]);
         cReport.setHow(values[8]);
         cReport.setDescription(values[9]);
